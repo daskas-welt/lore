@@ -1,0 +1,15 @@
+name: "Garrick the Smith"
+type: npc
+tags: [blacksmith, friendly, quest-giver]
+description: |
+  A burly man with soot-stained arms and a beard that looks like it lost
+  a fight with a forge. Garrick wipes his hands on his leather apron and
+  greets you with a grin missing one front tooth. The heat of the furnace
+  behind him makes the air shimmer.
+variants:
+  busy: |
+    Garrick is hammering away at a glowing blade, sparks flying with each
+    strike. He gives you a brief nod but does not stop working.
+  closed: |
+    The forge is cold and dark. A note on the door reads: "Gone to the
+    mines. Back next moon."

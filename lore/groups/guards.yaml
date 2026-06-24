@@ -1,0 +1,15 @@
+name: "City Watch"
+type: group
+tags: [guards, city, lawful]
+description: |
+  A patrol of four guards in polished chainmail, their tabards bearing the
+  crest of the Silver Crown. They move with practiced efficiency, eyes
+  scanning the crowd for trouble. The sergeant, a woman with a scar across
+  her cheek, nods at you as they pass.
+variants:
+  alert: |
+    The guards are tense, hands resting on sword hilts. They question every
+    passerby and check every cart with unusual thoroughness.
+  relaxed: |
+    The patrol leans against a fountain, sharing a flask and laughing at
+    some private joke. They wave you over with easy smiles.
