@@ -22,12 +22,15 @@ def parse_file(filepath: Path) -> Optional[LoreEntry]:
 
     ext = filepath.suffix.lower()
 
-    if ext == ".md":
-        return _parse_markdown(filepath, content)
-    elif ext in (".yaml", ".yml"):
-        return _parse_yaml(filepath, content)
-    elif ext == ".json":
-        return _parse_json(filepath, content)
+    try:
+        if ext == ".md":
+            return _parse_markdown(filepath, content)
+        elif ext in (".yaml", ".yml"):
+            return _parse_yaml(filepath, content)
+        elif ext == ".json":
+            return _parse_json(filepath, content)
+    except (ValueError, KeyError):
+        return None
 
     return None
 

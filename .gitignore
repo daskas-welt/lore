@@ -3,3 +3,14 @@ node_modules/
 
 # Build output
 dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/

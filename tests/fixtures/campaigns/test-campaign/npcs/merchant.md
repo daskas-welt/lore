@@ -3,6 +3,9 @@ name: "Old Marcus"
 type: npc
 role: merchant
 tags: [friendly, wise]
+variants:
+  happy: "Ah, welcome back! I have something special for you today!"
+  grumpy: "What do you want? Make it quick."
 ---
 
 # Old Marcus
@@ -14,7 +17,3 @@ A wizened merchant with a knowing smile.
 **Personality**: Friendly but shrewd
 
 **Known for**: Selling rare potions and ancient artifacts
-
-**Variants**:
-- **happy**: "Ah, welcome back! I have something special for you today!"
-- **grumpy**: "What do you want? Make it quick."

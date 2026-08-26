@@ -1,21 +1,20 @@
 """NPC and Object commands."""
 
-from pathlib import Path
 from typing import Optional
 
 import typer
 from rich.console import Console
 
-from ..core.config import require_active_campaign_path, get_active_campaign_path
 from ..core.loader import load_campaign_entries, find_entry_by_name
 from ..core.display import format_entry_header, format_entry_content
+from ._util import get_campaign_path
 
 console = Console()
 
 
 def show_npc(name: str, campaign: Optional[str] = None) -> None:
     """Show an NPC by name."""
-    campaign_path = _get_campaign_path(campaign)
+    campaign_path = get_campaign_path(campaign)
     entry = find_entry_by_name(campaign_path, name, entry_type="npc")
 
     if entry is None:
@@ -32,6 +31,8 @@ def show_npc(name: str, campaign: Optional[str] = None) -> None:
 
 def list_npcs(role: Optional[str] = None) -> None:
     """List all NPCs in the active campaign."""
+    from ..core.config import require_active_campaign_path
+
     campaign_path = require_active_campaign_path()
     entries = load_campaign_entries(campaign_path, entry_type="npc")
 
@@ -57,7 +58,7 @@ def list_npcs(role: Optional[str] = None) -> None:
 
 def show_object(name: str, campaign: Optional[str] = None) -> None:
     """Show an object by name."""
-    campaign_path = _get_campaign_path(campaign)
+    campaign_path = get_campaign_path(campaign)
     entry = find_entry_by_name(campaign_path, name, entry_type="object")
 
     if entry is None:
@@ -74,6 +75,8 @@ def show_object(name: str, campaign: Optional[str] = None) -> None:
 
 def list_objects(category: Optional[str] = None) -> None:
     """List all objects in the active campaign."""
+    from ..core.config import require_active_campaign_path
+
     campaign_path = require_active_campaign_path()
     entries = load_campaign_entries(campaign_path, entry_type="object")
 
@@ -97,18 +100,3 @@ def list_objects(category: Optional[str] = None) -> None:
         )
         tags = f" [{', '.join(entry.tags)}]" if entry.tags else ""
         console.print(f"  • {entry.name}{cat_str}{tags}")
-
-
-def _get_campaign_path(campaign: Optional[str] = None) -> Path:
-    """Get campaign path from name or active campaign."""
-    from ..core.config import get_campaigns_path
-
-    if campaign:
-        campaigns_dir = get_campaigns_path()
-        path = campaigns_dir / campaign
-        if not path.exists():
-            console.print(f"[red]Campaign '{campaign}' not found[/red]")
-            raise typer.Exit(1)
-        return path
-
-    return require_active_campaign_path()

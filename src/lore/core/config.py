@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 from typing import Optional
 
+import typer
+
 from .models import Config
 
 
@@ -72,10 +74,8 @@ def require_active_campaign_path() -> Path:
     """Get the active campaign path, or raise an error if none is set."""
     path = get_active_campaign_path()
     if path is None:
-        config = load_config()
-        raise RuntimeError(
-            f"No active campaign. Use 'lore use <campaign>' to set one.\n"
-            f"Available campaigns: {list_campaigns()}"
+        raise typer.Exit(
+            1, message="No active campaign. Use 'lore use <campaign>' to set one."
         )
     return path
 

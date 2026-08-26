@@ -6,7 +6,7 @@ import typer
 from rich.console import Console
 
 from . import __version__
-from .commands.display import display_entry, display_scene, display_npc, display_object
+from .commands.display import display_entry
 from .commands.campaign import (
     list_campaigns_cmd,
     use_campaign_cmd,
@@ -58,18 +58,9 @@ def display(
     ),
 ):
     """Display a lore entry by name."""
-    from .core.config import get_active_campaign_path, require_active_campaign_path
+    from .commands._util import get_campaign_path
 
-    if campaign:
-        from .core.config import get_campaigns_path
-
-        campaign_path = get_campaigns_path() / campaign
-        if not campaign_path.exists():
-            console.print(f"[red]Campaign '{campaign}' not found[/red]")
-            raise typer.Exit(1)
-    else:
-        campaign_path = require_active_campaign_path()
-
+    campaign_path = get_campaign_path(campaign)
     display_entry(name, campaign_path, entry_type=entry_type, raw=raw)
 
 
