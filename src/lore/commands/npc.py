@@ -3,13 +3,10 @@
 from typing import Optional
 
 import typer
-from rich.console import Console
 
 from ..core.loader import load_campaign_entries, find_entry_by_name
-from ..core.display import format_entry_header, format_entry_content
+from ..core.display import render_entry, render_npcs, render_objects, render_error
 from ._util import get_campaign_path
-
-console = Console()
 
 
 def show_npc(name: str, campaign: Optional[str] = None) -> None:
@@ -18,15 +15,10 @@ def show_npc(name: str, campaign: Optional[str] = None) -> None:
     entry = find_entry_by_name(campaign_path, name, entry_type="npc")
 
     if entry is None:
-        console.print(f"[red]NPC '{name}' not found[/red]")
+        render_error(f"NPC '{name}' not found")
         raise typer.Exit(1)
 
-    header = format_entry_header(entry.name, entry.type, entry.tags)
-    console.print(header)
-    console.print()
-
-    content = format_entry_content(entry.content, entry.variants)
-    console.print(content)
+    render_entry(entry.name, entry.type, entry.tags, entry.content, entry.variants)
 
 
 def list_npcs(role: Optional[str] = None) -> None:
@@ -42,18 +34,19 @@ def list_npcs(role: Optional[str] = None) -> None:
         ]
 
     if not entries:
-        console.print("[yellow]No NPCs found.[/yellow]")
+        render_error("No NPCs found.")
         return
 
-    console.print("[bold]NPCs:[/bold]")
-    for entry in sorted(entries, key=lambda e: e.name):
-        role_str = (
-            f" ({entry.frontmatter.get('role', '')})"
-            if entry.frontmatter.get("role")
-            else ""
-        )
-        tags = f" [{', '.join(entry.tags)}]" if entry.tags else ""
-        console.print(f"  • {entry.name}{role_str}{tags}")
+    npcs = [
+        {
+            "name": e.name,
+            "role": e.frontmatter.get("role", ""),
+            "tags": e.tags,
+        }
+        for e in sorted(entries, key=lambda e: e.name)
+    ]
+
+    render_npcs(npcs)
 
 
 def show_object(name: str, campaign: Optional[str] = None) -> None:
@@ -62,15 +55,10 @@ def show_object(name: str, campaign: Optional[str] = None) -> None:
     entry = find_entry_by_name(campaign_path, name, entry_type="object")
 
     if entry is None:
-        console.print(f"[red]Object '{name}' not found[/red]")
+        render_error(f"Object '{name}' not found")
         raise typer.Exit(1)
 
-    header = format_entry_header(entry.name, entry.type, entry.tags)
-    console.print(header)
-    console.print()
-
-    content = format_entry_content(entry.content, entry.variants)
-    console.print(content)
+    render_entry(entry.name, entry.type, entry.tags, entry.content, entry.variants)
 
 
 def list_objects(category: Optional[str] = None) -> None:
@@ -88,15 +76,16 @@ def list_objects(category: Optional[str] = None) -> None:
         ]
 
     if not entries:
-        console.print("[yellow]No objects found.[/yellow]")
+        render_error("No objects found.")
         return
 
-    console.print("[bold]Objects:[/bold]")
-    for entry in sorted(entries, key=lambda e: e.name):
-        cat_str = (
-            f" ({entry.frontmatter.get('category', '')})"
-            if entry.frontmatter.get("category")
-            else ""
-        )
-        tags = f" [{', '.join(entry.tags)}]" if entry.tags else ""
-        console.print(f"  • {entry.name}{cat_str}{tags}")
+    objects = [
+        {
+            "name": e.name,
+            "category": e.frontmatter.get("category", ""),
+            "tags": e.tags,
+        }
+        for e in sorted(entries, key=lambda e: e.name)
+    ]
+
+    render_objects(objects)

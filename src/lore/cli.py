@@ -3,7 +3,6 @@
 from typing import Optional
 
 import typer
-from rich.console import Console
 
 from . import __version__
 from .commands.display import display_entry
@@ -14,13 +13,13 @@ from .commands.campaign import (
     list_scenes_cmd,
 )
 from .commands.npc import show_npc, list_npcs, show_object, list_objects
+from .core.display import console
 
 app = typer.Typer(
     name="lore",
     help="A fast CLI tool for Dungeon Masters to retrieve read-aloud descriptions.",
     no_args_is_help=True,
 )
-console = Console()
 
 
 def version_callback(value: bool):
@@ -61,7 +60,7 @@ def display(
     from .commands._util import get_campaign_path
 
     campaign_path = get_campaign_path(campaign)
-    display_entry(name, campaign_path, entry_type=entry_type, raw=raw)
+    display_entry(name, str(campaign_path), entry_type=entry_type, raw=raw)
 
 
 @app.command()

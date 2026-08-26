@@ -1,122 +1,179 @@
-"""ANSI rendering for markdown content."""
+"""Rich-based display rendering for Lore entries."""
 
-import re
 from typing import Optional
 
-
-def render_markdown_to_ansi(content: str) -> str:
-    """Convert markdown text to ANSI-formatted terminal output."""
-    if not content:
-        return ""
-
-    lines = content.split("\n")
-    output_lines = []
-
-    for line in lines:
-        rendered = _render_line(line)
-        output_lines.append(rendered)
-
-    return "\n".join(output_lines)
+from rich.console import Console
+from rich.markdown import Markdown
+from rich.panel import Panel
+from rich.table import Table
+from rich.theme import Theme
+from rich.text import Text
 
 
-def _render_line(line: str) -> str:
-    """Render a single markdown line to ANSI."""
-    # Headers: # Header -> bold
-    if line.startswith("######"):
-        return f"\033[1m{line[6:].strip()}\033[0m"
-    elif line.startswith("#####"):
-        return f"\033[1m{line[5:].strip()}\033[0m"
-    elif line.startswith("####"):
-        return f"\033[1m{line[4:].strip()}\033[0m"
-    elif line.startswith("###"):
-        return f"\033[1m{line[3:].strip()}\033[0m"
-    elif line.startswith("##"):
-        return f"\033[1m{line[2:].strip()}\033[0m"
-    elif line.startswith("#"):
-        return f"\033[1m{line[1:].strip()}\033[0m"
+# Custom theme for consistent styling
+THEME = Theme(
+    {
+        "lore.title": "bold cyan",
+        "lore.subtitle": "dim italic",
+        "lore.type": "bold yellow",
+        "lore.tag": "dim green",
+        "lore.name": "bold white",
+        "lore.header": "bold magenta",
+        "lore.accent": "bright_cyan",
+        "lore.muted": "dim",
+    }
+)
 
-    # Horizontal rule
-    if re.match(r"^[-*_]{3,}$", line.strip()):
-        return "─" * 40
-
-    # List items: - item or * item or 1. item
-    list_match = re.match(r"^(\s*)([-*]|\d+\.)\s+(.*)", line)
-    if list_match:
-        indent, bullet, text = list_match.groups()
-        rendered_text = _render_inline(text)
-        if bullet in ("-", "*"):
-            return f"{indent}• {rendered_text}"
-        else:
-            return f"{indent}{bullet} {rendered_text}"
-
-    # Blockquote
-    if line.startswith(">"):
-        return f"\033[2m{line}\033[0m"
-
-    # Regular paragraph - render inline formatting
-    return _render_inline(line)
+console = Console(theme=THEME)
 
 
-def _render_inline(text: str) -> str:
-    """Render inline markdown formatting to ANSI."""
-    # Bold: **text** or __text__
-    text = re.sub(
-        r"\*\*(.+?)\*\*",
-        lambda m: f"\033[1m{m.group(1)}\033[0m",
-        text,
-    )
-    text = re.sub(
-        r"__(.+?)__",
-        lambda m: f"\033[1m{m.group(1)}\033[0m",
-        text,
-    )
+def render_entry(
+    name: str,
+    entry_type: str,
+    tags: list[str],
+    content: str,
+    variants: Optional[dict] = None,
+) -> None:
+    """Render a lore entry with Rich formatting."""
+    # Build title with type badge
+    title = Text()
+    title.append(f"  {entry_type.upper()}  ", style="lore.type")
+    title.append("  ")
+    title.append(name, style="lore.name")
 
-    # Italic: *text* or _text_
-    text = re.sub(
-        r"\*(.+?)\*",
-        lambda m: f"\033[3m{m.group(1)}\033[0m",
-        text,
-    )
-    text = re.sub(
-        r"(?<!\w)_(.+?)_(?!\w)",
-        lambda m: f"\033[3m{m.group(1)}\033[0m",
-        text,
-    )
-
-    # Code: `text`
-    text = re.sub(
-        r"`(.+?)`",
-        lambda m: f"\033[7m{m.group(1)}\033[0m",
-        text,
-    )
-
-    # Strikethrough: ~~text~~
-    text = re.sub(
-        r"~~(.+?)~~",
-        lambda m: f"\033[9m{m.group(1)}\033[0m",
-        text,
-    )
-
-    return text
-
-
-def format_entry_header(name: str, entry_type: str, tags: list[str]) -> str:
-    """Format an entry header with type and tags."""
-    header = f"\033[1m{entry_type.upper()}: {name}\033[0m"
+    # Build subtitle with tags
+    subtitle = ""
     if tags:
-        header += f" [{', '.join(tags)}]"
-    return header
+        subtitle = " ".join(f"[lore.tag]#{tag}[/lore.tag]" for tag in tags)
 
+    # Render markdown content
+    md = Markdown(content)
 
-def format_entry_content(content: str, variants: Optional[dict] = None) -> str:
-    """Format entry content with optional variant selection."""
-    output = render_markdown_to_ansi(content)
+    # Create panel with content
+    panel = Panel(
+        md,
+        title=title,
+        subtitle=subtitle if subtitle else None,
+        subtitle_align="right",
+        border_style="lore.accent",
+        padding=(1, 2),
+    )
 
+    console.print(panel)
+
+    # Render variants if present
     if variants:
-        output += "\n\n"
+        console.print()
         for key, value in variants.items():
-            output += f"\033[1m{key.title()}:\033[0m\n"
-            output += render_markdown_to_ansi(value)
-            output += "\n"
+            variant_panel = Panel(
+                Markdown(value),
+                title=f"[lore.header]{key.title()}[/lore.header]",
+                border_style="dim",
+                padding=(0, 1),
+            )
+            console.print(variant_panel)
 
-    return output
+
+def render_list(title: str, items: list[dict], columns: list[str]) -> None:
+    """Render a list of items as a Rich table."""
+    table = Table(
+        title=title, show_header=True, header_style="bold cyan", border_style="dim"
+    )
+
+    for col in columns:
+        table.add_column(col, style="white")
+
+    for item in items:
+        row = [item.get(col.lower(), "") for col in columns]
+        table.add_row(*row)
+
+    console.print(table)
+
+
+def render_campaigns(campaigns: list[str], active: Optional[str] = None) -> None:
+    """Render the list of campaigns."""
+    table = Table(
+        title="Campaigns",
+        show_header=True,
+        header_style="bold cyan",
+        border_style="dim",
+    )
+    table.add_column("Name", style="white")
+    table.add_column("Status", justify="center")
+
+    for name in sorted(campaigns):
+        status = "[green]* active[/green]" if name == active else "[dim]-[/dim]"
+        style = "bold" if name == active else ""
+        table.add_row(Text(name, style=style), status)
+
+    console.print(table)
+
+
+def render_scenes(scenes: list[dict], campaign_name: str) -> None:
+    """Render the list of scenes."""
+    table = Table(
+        title=f"Scenes in {campaign_name}",
+        show_header=True,
+        header_style="bold cyan",
+        border_style="dim",
+    )
+    table.add_column("Name", style="white")
+    table.add_column("Tags", style="dim green")
+
+    for scene in scenes:
+        name = scene.get("name", "")
+        tags = ", ".join(scene.get("tags", []))
+        table.add_row(name, tags)
+
+    console.print(table)
+
+
+def render_npcs(npcs: list[dict]) -> None:
+    """Render the list of NPCs."""
+    table = Table(
+        title="NPCs", show_header=True, header_style="bold cyan", border_style="dim"
+    )
+    table.add_column("Name", style="white")
+    table.add_column("Role", style="yellow")
+    table.add_column("Tags", style="dim green")
+
+    for npc in npcs:
+        name = npc.get("name", "")
+        role = npc.get("role", "")
+        tags = ", ".join(npc.get("tags", []))
+        table.add_row(name, role, tags)
+
+    console.print(table)
+
+
+def render_objects(objects: list[dict]) -> None:
+    """Render the list of objects."""
+    table = Table(
+        title="Objects", show_header=True, header_style="bold cyan", border_style="dim"
+    )
+    table.add_column("Name", style="white")
+    table.add_column("Category", style="yellow")
+    table.add_column("Tags", style="dim green")
+
+    for obj in objects:
+        name = obj.get("name", "")
+        category = obj.get("category", "")
+        tags = ", ".join(obj.get("tags", []))
+        table.add_row(name, category, tags)
+
+    console.print(table)
+
+
+def render_error(message: str) -> None:
+    """Render an error message."""
+    console.print(f"[bold red]Error:[/bold red] {message}")
+
+
+def render_success(message: str) -> None:
+    """Render a success message."""
+    console.print(f"[bold green]+[/bold green] {message}")
+
+
+def render_info(message: str) -> None:
+    """Render an info message."""
+    console.print(f"[dim]{message}[/dim]")
