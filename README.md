@@ -1,88 +1,201 @@
 # Lore
 
-A fast CLI tool for Dungeon Masters to retrieve read-aloud descriptions of areas, NPCs, and groups. Built with [Ink](https://github.com/vadimdemedes/ink) for a rich, full-screen terminal UI with centered text, generous padding, and retro text-adventure styling.
+A fast CLI tool for Dungeon Masters to retrieve read-aloud descriptions of areas, NPCs, and objects.
 
 ## Installation
 
 ```bash
-npm install
-npm run build
-npm link
+# Install from source
+pip install -e .
+
+# Or install directly
+pip install -e /path/to/lore
+```
+
+### Development
+
+```bash
+pip install -e ".[dev]"
 ```
 
 ## Usage
 
-### Interactive TUI (default)
+### Campaign Management
 
 ```bash
-lore
+# Create a new campaign
+lore init "my-campaign"
+
+# List all campaigns
+lore campaigns
+
+# Switch active campaign
+lore use my-campaign
 ```
 
-Opens a full-screen interface:
-- **Type to search** — fuzzy-filter entries in real time
-- **↑/↓** — highlight an entry
-- **Enter** — view the selected entry
-
-In view mode:
-- **q / Esc** — back to search
-- **n / p** — next / previous entry
-- **v** — cycle variants
-- **1-9** — jump to a specific variant
-
-The output is centered on screen with double-line borders, generous padding, and bold green text — evoking classic text adventures.
-
-### Non-interactive CLI
-
-When piping or running without a TTY, Lore falls back to simple CLI output:
+### Display Content
 
 ```bash
-lore show forest
-lore s garrick
-lore help
+# Display any lore entry by name
+lore display forest
+lore display "The Whispering Forest"
+
+# Display specific types
+lore display merchant --type npc
+lore display sword --type object
 ```
 
-## Content Directory
+### Scenes
 
-By default, Lore looks for a `lore/` directory in your current working directory. If none is found, it falls back to the built-in example content.
+```bash
+# List all scenes in active campaign
+lore scenes
 
-### Directory layout
-
-```
-lore/
-├── areas/
-│   └── forest.yaml
-├── npcs/
-│   └── blacksmith.yaml
-└── groups/
-    └── guards.yaml
+# Display a scene
+lore display forest
 ```
 
-### YAML Schema
+### NPCs
+
+```bash
+# List all NPCs
+lore npcs
+
+# Filter by role
+lore npcs --role merchant
+
+# Show NPC by name
+lore npc "Old Marcus"
+lore npc marcus
+```
+
+### Objects
+
+```bash
+# List all objects
+lore objects
+
+# Filter by category
+lore objects --category weapon
+
+# Show object by name
+lore object "Dragon Slayer"
+lore object sword
+```
+
+## Campaign Structure
+
+Campaigns are stored in `~/.lore/campaigns/`:
+
+```
+~/.lore/
+├── config.json              # Active campaign state
+└── campaigns/
+    ├── my-campaign/
+    │   ├── areas/
+    │   │   └── forest.md
+    │   ├── npcs/
+    │   │   └── merchant.md
+    │   ├── groups/
+    │   │   └── guards.md
+    │   └── objects/
+    │       └── magic-sword.md
+    └── another-campaign/
+        └── ...
+```
+
+## Content Format
+
+Lore supports YAML and Markdown with YAML frontmatter.
+
+### Markdown + Frontmatter
+
+```markdown
+---
+title: "The Whispering Forest"
+type: area
+tags: [forest, dangerous, magical]
+---
+
+# The Whispering Forest
+
+The trees here are ancient, their bark gnarled and silver-grey.
+
+**Atmosphere**: Eerie silence, cold wind, strange whispers
+
+**Key Features**:
+- Towering oak trees
+- Dappled sunlight
+- Hidden paths between trunks
+```
+
+### YAML Format
 
 ```yaml
-name: "The Whispering Forest"
-type: area              # area | npc | group
-tags: [forest, magical]
+name: "Old Marcus"
+type: npc
+role: merchant
+tags: [friendly, wise]
 description: |
-  The trees here are ancient...
+  A wizened merchant with a knowing smile.
 variants:
-  morning: |
-    Golden shafts of light...
-  evening: |
-    Long shadows stretch...
+  happy: "Ah, welcome back!"
+  grumpy: "What do you want?"
 ```
 
-- `name` — display title
-- `type` — category for filtering
-- `tags` — optional labels for future use
-- `description` — base text, always shown
-- `variants` — optional keyed overrides (time of day, weather, mood, etc.)
+### Frontmatter Fields
 
-## Font Size
+- `title` / `name` — display title (required)
+- `type` — category: `area`, `npc`, `group`, `object` (required)
+- `tags` — optional labels for filtering
+- `variants` — optional keyed overrides (mood, time of day, etc.)
 
-The TUI cannot change your terminal's actual font size — that's controlled by your terminal emulator. To make text larger:
+## Quick Start
 
-- **Windows Terminal**: `Ctrl` + `+` or `Ctrl` + scroll wheel
-- **CMD**: Right-click title bar → Properties → Font tab
+```bash
+# Install
+pip install -e .
 
-The large ASCII "LORE" header and bold double-line borders are designed to look substantial even at default sizes.
+# Create your first campaign
+lore init "my-adventure"
+
+# Add content (create .md files in ~/.lore/campaigns/my-adventure/)
+# areas/forest.md, npcs/merchant.md, objects/sword.md
+
+# Display content during your session
+lore display forest
+lore npc merchant
+lore objects
+
+# Switch between campaigns
+lore use other-campaign
+lore campaigns
+```
+
+## Development
+
+```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest
+
+# Run specific tests
+pytest tests/unit/
+pytest tests/integration/
+```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `lore init <name>` | Create a new campaign |
+| `lore campaigns` | List all campaigns |
+| `lore use <campaign>` | Switch active campaign |
+| `lore display <name>` | Display any lore entry |
+| `lore scenes` | List scenes in active campaign |
+| `lore npc <name>` | Show NPC by name |
+| `lore npcs` | List all NPCs |
+| `lore object <name>` | Show object by name |
+| `lore objects` | List all objects |
