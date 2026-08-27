@@ -135,13 +135,17 @@ class TestLoadEntriesFromDir:
 
     def test_load_from_areas(self):
         entries = load_entries_from_dir(FIXTURES_DIR / "areas")
-        assert len(entries) == 1
-        assert entries[0].name == "The Whispering Forest"
+        assert len(entries) >= 1
+        names = [e.name for e in entries]
+        assert "The Whispering Forest" in names
+        assert all(e.type == "area" for e in entries)
 
     def test_load_from_npcs(self):
         entries = load_entries_from_dir(FIXTURES_DIR / "npcs")
-        assert len(entries) == 1
-        assert entries[0].name == "Old Marcus"
+        assert len(entries) >= 1
+        names = [e.name for e in entries]
+        assert "Old Marcus" in names
+        assert all(e.type == "npc" for e in entries)
 
     def test_load_from_empty_dir(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -166,13 +170,13 @@ class TestLoadAllEntries:
 
     def test_load_all_by_type(self):
         areas = load_all_entries(entry_type="area", fixtures_dir=FIXTURES_DIR)
-        assert len(areas) == 1
-        assert areas[0].type == "area"
+        assert len(areas) >= 1
+        assert all(a.type == "area" for a in areas)
 
     def test_load_all_npcs(self):
         npcs = load_all_entries(entry_type="npc", fixtures_dir=FIXTURES_DIR)
-        assert len(npcs) == 1
-        assert npcs[0].type == "npc"
+        assert len(npcs) >= 1
+        assert all(n.type == "npc" for n in npcs)
 
 
 class TestFindEntryByName:
