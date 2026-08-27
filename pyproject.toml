@@ -4,9 +4,21 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lore"
-version = "2.0.0"
-description = "A TUI for Dungeon Masters to read aloud descriptions of areas, NPCs, and objects"
+version = "0.1.0"
+description = "A read-aloud companion for Dungeon Masters — browse, search, and display ready-made descriptions at the table"
 requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Games/Entertainment :: Role-Playing",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/user/lore"
+Changelog = "https://github.com/user/lore/blob/main/CHANGELOG.md"
+Issues = "https://github.com/user/lore/issues"
 dependencies = [
     "textual>=0.40.0",
     "rich>=13.0",

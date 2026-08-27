@@ -2,65 +2,56 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    tags: ["v*"]
 
 permissions:
   contents: write
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install dependencies
-        run: pip install -e . pyinstaller
-      - name: Build exe
-        run: pyinstaller lore.spec
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: lore-windows
-          path: dist/lore.exe
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: lore-windows.exe
+          - os: ubuntu-latest
+            artifact: lore-linux
+    runs-on: ${{ matrix.os }}
 
-  build-linux:
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
+
       - name: Install dependencies
-        run: pip install -e . pyinstaller
-      - name: Build binary
+        run: pip install pyinstaller
+
+      - name: Build executable
         run: pyinstaller lore.spec
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lore-linux
+          name: ${{ matrix.artifact }}
           path: dist/lore
 
   release:
-    needs: [build-windows, build-linux]
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download Windows artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lore-windows
-          path: ./dist
-      - name: Download Linux artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: lore-linux
-          path: ./dist
-      - name: Create Release
+      - uses: actions/download-artifact@v4
+
+      - name: Package executables
+        run: |
+          cd lore-windows.exe && zip -r ../lore-windows.zip . && cd ..
+          cd lore-linux && tar czf ../lore-linux.tar.gz . && cd ..
+
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/lore.exe
-            dist/lore
+            lore-windows.zip
+            lore-linux.tar.gz
           generate_release_notes: true
