@@ -1,14 +1,14 @@
 ---
-name: "Indicara Jungle"
+name: "The River Jungle"
 type: area
-tags: [jungle, tropical, dense, generic, indicara]
+tags: [jungle, tropical, dense, river, generic]
 ---
 
-# Indicara Jungle
+# The River Jungle
 
-Hot, humid, dense — 100-foot trees lock a thick green canopy over the floor. Every trunk is cloaked in vines, skulls dangle as warnings.
+Hot, humid, dense — towering trees lock a thick green canopy over the floor. Every trunk is cloaked in vines and bright flowers.
 
-**Read-Aloud** *(UK6 p.4)*: *On both sides of the river lush vegetation stretches skywards forming an arch over the water. Brilliant splashes of colour break the greenery — birds and flowers. But soon the hot sticky air sends rivers of sweat down your backs. Already swarms of mosquitoes gather, buzzing around you.*
+**Read-Aloud**: *On both sides of the river, lush vegetation stretches skyward to form an arch over the water. Brilliant birds and flowers break the greenery. The hot, sticky air sends sweat down your backs, and mosquitoes gather around every exposed inch of skin.*
 
-**Hazards**: Heat/humidity (1 check/week DMG p13), disease, dense undergrowth (3/4 speed off-river), unnavigable rivers above Kett's Rapids.
+**Hazards**: Heat, disease, dense undergrowth, hidden sinkholes, flash floods, and unnavigable rapids.
 **Movement**: Riverbank = 3/4 normal, jungle = slow, needs machete.
