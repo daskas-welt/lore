@@ -5,6 +5,8 @@ A read-aloud companion for Dungeon Masters. Browse, search, and display ready-ma
 [![Latest Version](https://img.shields.io/github/v/release/user/lore)](https://github.com/user/lore/releases)
 [![Changelog](https://img.shields.io/badge/changelog-CHANGELOG.md-blue)](CHANGELOG.md)
 
+![Lore TUI](docs/screenshot.png)
+
 ## About
 
 Lore is a text-based tool for DMs who want instant access to read-aloud descriptions during sessions. It loads a flat library of markdown entries from `~/.lore/content/` and presents them in a filterable, searchable interface.
