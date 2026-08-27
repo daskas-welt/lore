@@ -1,8 +1,7 @@
-"""Data models for Lore entries and campaigns."""
+"""Data models for Lore entries."""
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass
@@ -22,26 +21,3 @@ class LoreEntry:
             raise ValueError(
                 f"Invalid type: {self.type}. Must be area, npc, group, or object"
             )
-
-
-@dataclass
-class Campaign:
-    """A campaign directory containing lore entries."""
-
-    name: str
-    path: Path
-    created: str = ""
-    last_accessed: str = ""
-
-    def exists(self) -> bool:
-        return self.path.exists() and self.path.is_dir()
-
-
-@dataclass
-class Config:
-    """Global configuration stored in ~/.lore/config.json."""
-
-    active_campaign: Optional[str] = None
-    campaigns_path: str = ""
-    version: str = "2.0.0"
-    preferences: dict = field(default_factory=dict)

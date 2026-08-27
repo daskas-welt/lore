@@ -20,19 +20,6 @@ pip install -e ".[dev]"
 
 ## Usage
 
-### Campaign Management
-
-```bash
-# Create a new campaign
-lore init "my-campaign"
-
-# List all campaigns
-lore campaigns
-
-# Switch active campaign
-lore use my-campaign
-```
-
 ### Display Content
 
 ```bash
@@ -45,14 +32,11 @@ lore display merchant --type npc
 lore display sword --type object
 ```
 
-### Scenes
+### Areas
 
 ```bash
-# List all scenes in active campaign
-lore scenes
-
-# Display a scene
-lore display forest
+# List all areas
+lore areas
 ```
 
 ### NPCs
@@ -60,13 +44,13 @@ lore display forest
 ```bash
 # List all NPCs
 lore npcs
+```
 
-# Filter by role
-lore npcs --role merchant
+### Groups
 
-# Show NPC by name
-lore npc "Old Marcus"
-lore npc marcus
+```bash
+# List all groups
+lore groups
 ```
 
 ### Objects
@@ -74,34 +58,32 @@ lore npc marcus
 ```bash
 # List all objects
 lore objects
-
-# Filter by category
-lore objects --category weapon
-
-# Show object by name
-lore object "Dragon Slayer"
-lore object sword
 ```
 
-## Campaign Structure
+### Dice Roll
 
-Campaigns are stored in `~/.lore/campaigns/`:
+```bash
+# Roll a d20 (default)
+lore roll
+
+# Roll a d6
+lore roll 6
+```
+
+## Content Structure
+
+Content is stored in `~/.lore/content/`:
 
 ```
-~/.lore/
-├── config.json              # Active campaign state
-└── campaigns/
-    ├── my-campaign/
-    │   ├── areas/
-    │   │   └── forest.md
-    │   ├── npcs/
-    │   │   └── merchant.md
-    │   ├── groups/
-    │   │   └── guards.md
-    │   └── objects/
-    │       └── magic-sword.md
-    └── another-campaign/
-        └── ...
+~/.lore/content/
+├── areas/
+│   └── forest.md
+├── npcs/
+│   └── merchant.md
+├── groups/
+│   └── guards.md
+└── objects/
+    └── magic-sword.md
 ```
 
 ## Content Format
@@ -156,20 +138,13 @@ variants:
 # Install
 pip install -e .
 
-# Create your first campaign
-lore init "my-adventure"
-
-# Add content (create .md files in ~/.lore/campaigns/my-adventure/)
+# Add content (create .md files in ~/.lore/content/)
 # areas/forest.md, npcs/merchant.md, objects/sword.md
 
 # Display content during your session
 lore display forest
-lore npc merchant
+lore npcs
 lore objects
-
-# Switch between campaigns
-lore use other-campaign
-lore campaigns
 ```
 
 ## Development
@@ -190,12 +165,10 @@ pytest tests/integration/
 
 | Command | Description |
 |---------|-------------|
-| `lore init <name>` | Create a new campaign |
-| `lore campaigns` | List all campaigns |
-| `lore use <campaign>` | Switch active campaign |
 | `lore display <name>` | Display any lore entry |
-| `lore scenes` | List scenes in active campaign |
-| `lore npc <name>` | Show NPC by name |
+| `lore areas` | List all areas |
 | `lore npcs` | List all NPCs |
-| `lore object <name>` | Show object by name |
+| `lore groups` | List all groups |
 | `lore objects` | List all objects |
+| `lore roll [sides]` | Roll a dice (default d20) |
+| `lore help` | Show available commands |

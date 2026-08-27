@@ -1,1 +1,1 @@
-"""Tests package for Lore."""
+"""Tests package."""

@@ -1,99 +1,47 @@
-"""Configuration management for ~/.lore/config.json."""
+"""Configuration and path management for Lore."""
 
 import json
 from pathlib import Path
-from typing import Optional
-
-import typer
-
-from .models import Config
 
 
 CONFIG_DIR = Path.home() / ".lore"
+CONTENT_DIR = CONFIG_DIR / "content"
 CONFIG_FILE = CONFIG_DIR / "config.json"
-CAMPAIGNS_DIR = CONFIG_DIR / "campaigns"
 
 
-def get_config_path() -> Path:
-    """Get the path to the config file."""
-    return CONFIG_FILE
+def get_content_path() -> Path:
+    """Get the path to the content directory."""
+    return CONTENT_DIR
 
 
-def get_campaigns_path() -> Path:
-    """Get the path to the campaigns directory."""
-    return CAMPAIGNS_DIR
+def ensure_content_dir() -> None:
+    """Create the content directory and subdirectories if they don't exist."""
+    for subdir in ["areas", "npcs", "groups", "objects"]:
+        (CONTENT_DIR / subdir).mkdir(parents=True, exist_ok=True)
 
 
-def load_config() -> Config:
-    """Load config from ~/.lore/config.json, or return defaults."""
+def get_theme() -> str:
+    """End-user theme preference — persisted in ~/.lore/config.json (light default)."""
     if not CONFIG_FILE.exists():
-        return Config()
-
+        return "light"
     try:
-        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return Config(
-            active_campaign=data.get("activeCampaign"),
-            campaigns_path=data.get("campaignsPath", ""),
-            version=data.get("version", "2.0.0"),
-            preferences=data.get("preferences", {}),
-        )
-    except (json.JSONDecodeError, KeyError):
-        return Config()
+        data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+        v = data.get("theme", "light")
+        return v if v in ("light", "dark") else "light"
+    except Exception:
+        return "light"
 
 
-def save_config(config: Config) -> None:
-    """Save config to ~/.lore/config.json."""
+def set_theme(mode: str) -> None:
+    """Persist end-user theme preference."""
+    if mode not in ("light", "dark"):
+        mode = "light"
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-
-    data = {
-        "activeCampaign": config.active_campaign,
-        "campaignsPath": config.campaigns_path,
-        "version": config.version,
-        "preferences": config.preferences,
-    }
-
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-
-
-def get_active_campaign_path() -> Optional[Path]:
-    """Get the path to the active campaign directory."""
-    config = load_config()
-    if config.active_campaign is None:
-        return None
-
-    campaign_path = CAMPAIGNS_DIR / config.active_campaign
-    if campaign_path.exists() and campaign_path.is_dir():
-        return campaign_path
-
-    return None
-
-
-def require_active_campaign_path() -> Path:
-    """Get the active campaign path, or raise an error if none is set."""
-    path = get_active_campaign_path()
-    if path is None:
-        raise typer.Exit(
-            1, message="No active campaign. Use 'lore use <campaign>' to set one."
-        )
-    return path
-
-
-def set_active_campaign(name: str) -> None:
-    """Set the active campaign in config."""
-    config = load_config()
-    config.active_campaign = name
-    save_config(config)
-
-
-def list_campaigns() -> list[str]:
-    """List all available campaigns."""
-    if not CAMPAIGNS_DIR.exists():
-        return []
-
-    return [
-        d.name
-        for d in CAMPAIGNS_DIR.iterdir()
-        if d.is_dir() and not d.name.startswith(".")
-    ]
+    data: dict = {}
+    if CONFIG_FILE.exists():
+        try:
+            data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+    data["theme"] = mode
+    CONFIG_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")

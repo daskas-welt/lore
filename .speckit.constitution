@@ -1,0 +1,34 @@
+# Lore Constitution
+
+## Purpose
+
+Lore is a TUI for Dungeon Masters to quickly retrieve and read aloud descriptions of areas, NPCs, and objects during tabletop RPG sessions.
+
+## Principles
+
+1. **Speed** — Fast retrieval of descriptions at the table. No friction.
+2. **Simplicity** — Flat content structure. No campaigns, no nested hierarchies.
+3. **Read-aloud ready** — Content is formatted for immersive reading, not editing.
+4. **Offline-first** — All data is local files. No network required.
+
+## Architecture
+
+- **CLI:** Typer + Rich for quick lookups
+- **TUI:** Textual for interactive browsing
+- **Content:** Markdown/YAML/JSON files in `~/.lore/content/{areas,npcs,groups,objects}/`
+- **Models:** Single `LoreEntry` dataclass. No campaign or config models.
+
+## Scope
+
+### In scope
+- Areas, NPCs, groups, objects
+- Markdown with YAML frontmatter
+- CLI commands: `display`, `areas`, `npcs`, `groups`, `objects`, `roll`, `help`
+- Textual TUI with search and filtering
+
+### Out of scope
+- Campaign management
+- Multi-user / collaborative editing
+- Database storage
+- Network features
+- Character sheets or game mechanics
