@@ -16,9 +16,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/user/lore"
-Changelog = "https://github.com/user/lore/blob/main/CHANGELOG.md"
-Issues = "https://github.com/user/lore/issues"
+Homepage = "https://github.com/daskas-welt/lore"
+Changelog = "https://github.com/daskas-welt/lore/blob/main/CHANGELOG.md"
+Issues = "https://github.com/daskas-welt/lore/issues"
 dependencies = [
     "textual>=0.40.0",
     "rich>=13.0",

@@ -20,4 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integration tests for TUI workflow
 - PyInstaller builds for Windows and Linux via `lore.spec`
 
-[0.1.0]: https://github.com/user/lore/releases/tag/v0.1.0
+[0.1.0]: https://github.com/daskas-welt/lore/releases/tag/v0.1.0

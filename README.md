@@ -2,7 +2,7 @@
 
 A read-aloud companion for Dungeon Masters. Browse, search, and display ready-made descriptions of areas, NPCs, groups, and objects at the table.
 
-[![Latest Version](https://img.shields.io/github/v/release/user/lore)](https://github.com/user/lore/releases)
+[![Latest Version](https://img.shields.io/github/v/release/daskas-welt/lore)](https://github.com/daskas-welt/lore/releases)
 [![Changelog](https://img.shields.io/badge/changelog-CHANGELOG.md-blue)](CHANGELOG.md)
 
 ![Lore TUI](docs/screenshot.png)
@@ -158,7 +158,7 @@ All entries are paraphrased and generic — reusable across settings without rep
 
 ## PyInstaller Builds
 
-Pre-built executables are available on the [Releases](https://github.com/user/lore/releases) page for Windows and Linux.
+Pre-built executables are available on the [Releases](https://github.com/daskas-welt/lore/releases) page for Windows and Linux.
 
 To build locally:
 
