@@ -5,7 +5,9 @@ A read-aloud companion for Dungeon Masters. Browse, search, and display ready-ma
 [![Latest Version](https://img.shields.io/github/v/release/daskas-welt/lore)](https://github.com/daskas-welt/lore/releases)
 [![Changelog](https://img.shields.io/badge/changelog-CHANGELOG.md-blue)](CHANGELOG.md)
 
-![Lore TUI](docs/screenshot.png)
+![Lore TUI — NPC detail view showing Captain Elara Voss with tags, description, and Variants in the light theme](docs/screenshot.png)
+
+> **Light theme — NPCs tab:** Left: searchable entry list; Right: selected entry (`Captain Elara Voss` / `#guard #leader #serious #quest-giver`) with markdown description, DM-reference bullets (*Voss can provide*), and `Variants` (`On_Duty` / `Off_Duty` / `Urgent`). Top tabs filter by `All` · `Areas` · `NPCs` · `Groups` · `Objects`; bottom bar shows `q Quit` · `/ Search` · `h Help` · `^p Palette`.
 
 ## About
 
