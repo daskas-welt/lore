@@ -12,9 +12,10 @@ A read-aloud companion for Dungeon Masters. Browse, search, and display ready-ma
 Lore is a text-based tool for DMs who want instant access to read-aloud descriptions during sessions. It loads a flat library of markdown entries from `~/.lore/content/` and presents them in a filterable, searchable interface.
 
 **What it does:**
-- Browse entries by type: areas, NPCs, groups, objects
+- Browse entries by type with emoji markers (⛰️ area, 🧙 npc, ⚔️ group, 🗡️ object)
 - Search across all entries by name or tag
-- Read full markdown descriptions with rendered formatting
+- Styled read-aloud display: `Read-Aloud:` as a gold italic callout, `Atmosphere`/`Hazards`/`Hooks`/`Sounds` as a pinned DM-reference strip
+- Full markdown rendering for the rest of the body
 - Filter by category with tab navigation
 
 **What it is not:**
@@ -39,12 +40,12 @@ pip install -e ".[dev]"
 
 ### Pre-built Binaries
 
-No Python required. Download the latest release for your platform from the [Releases](https://github.com/user/lore/releases) page:
+No Python required. Download the latest release for your platform from the [Releases](https://github.com/daskas-welt/lore/releases) page:
 
-- **Windows** — `lore-windows.zip`, extract and run `lore.exe`
+- **Windows** — `lore-windows.zip`, extract and run `lore.exe` (or `.\lore.exe` from PowerShell/Windows Terminal)
 - **Linux** — `lore-linux.tar.gz`, extract and run `./lore`
 
-Both are self-contained executables with no dependencies.
+Both are self-contained executables with no dependencies. Run from a terminal — double-clicking a windowed exe without a console will not work.
 
 Each release includes auto-generated notes summarizing what changed. See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
@@ -109,30 +110,28 @@ Entries live in `~/.lore/content/`:
 
 ## Content Format
 
-Each entry is a markdown file with YAML frontmatter.
+Each entry is a markdown file with YAML frontmatter. Body text before the first `Key:` is rendered as markdown; structured keys are parsed into styled panels.
 
 ```markdown
 ---
-name: "The Whispering Forest"
+name: "Narrow Defile"
 type: area
-tags:
-  - forest
-  - dangerous
-  - magical
+tags: [mountain, battlefield]
 variants:
-  default: "The Whispering Forest"
-  night: "The Darkwood"
+  night: "The defile under moonlight"
 ---
 
-The trees here are ancient, their bark gnarled and silver-grey.
-
-**Atmosphere**: Eerie silence, cold wind, strange whispers
-
-**Key Features**:
-- Towering oak trees
-- Dappled sunlight
-- Hidden paths between trunks
+A narrow defile between two black cliffs, choked with the wreckage of a forgotten war.
+Read-Aloud: The trail funnels into a gap where the mountains nearly touch. Splintered shields and rusted mail crust the scree; a banner snaps in the wind above a cairn of skulls.
+Atmosphere: Cold, exposed, wind howling through the gap, tense.
+Hazards: Rockfall (DC 13 DEX), ambush positions, exposed to archers.
+Hooks: Siege engine wreck, trapped survivor, secret sally-port in the cliff.
+Sounds: Wind through the gap, the ring of loosened stone, distant horn.
 ```
+
+- `Read-Aloud:` → gold italic callout above the content (what you read to players)
+- `Atmosphere:` / `Hazards:` / `Hooks:` / `Sounds:` → dim panels pinned in a strip below the content (DM reference)
+- Tags render as inline code badges (e.g. `#mountain`) at the top of the entry
 
 ### Frontmatter Fields
 
@@ -158,7 +157,7 @@ All entries are paraphrased and generic — reusable across settings without rep
 
 ## PyInstaller Builds
 
-Pre-built executables are available on the [Releases](https://github.com/daskas-welt/lore/releases) page for Windows and Linux.
+Pre-built executables are available on the [Releases](https://github.com/daskas-welt/lore/releases) page for Windows and Linux. The `Release` workflow builds on tag push (`v*`).
 
 To build locally:
 
