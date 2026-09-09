@@ -1,6 +1,10 @@
 """Textual TUI — textual defaults (Button/MarkdownViewer/Footer palette)."""
 
+import re
 from typing import Optional
+
+from rich.panel import Panel
+from rich.text import Text
 
 from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding
@@ -15,6 +19,7 @@ from textual.widgets import (
     Input,
     Markdown,
     MarkdownViewer,
+    Static,
     Tabs,
     Tab,
 )
@@ -33,6 +38,32 @@ TYPE_ICONS = {
     "group": "⚔️",
     "object": "🗡️",
 }
+
+# Structured body sections pulled out of the markdown and shown as callouts.
+# "Read-Aloud" gets the accent callout above the content; the rest go to the
+# DM-reference strip pinned below the viewer.
+SECTION_KEYS = ("Read-Aloud", "Atmosphere", "Hazards", "Hooks", "Sounds")
+SECTION_RE = re.compile(
+    r"(?i)\b(" + "|".join(k.replace("-", "[ -]?") for k in SECTION_KEYS) + r")\s*:"
+)
+
+
+def split_sections(body: str) -> tuple[str, list[tuple[str, str]]]:
+    """Split entry body into (markdown intro, [(section title, text), ...]).
+
+    Sections start at an inline ``Key:`` mention (case-insensitive) and run to
+    the next key or end of text. Text before the first key stays markdown.
+    """
+    matches = list(SECTION_RE.finditer(body))
+    if not matches:
+        return body.strip(), []
+    intro = body[: matches[0].start()].strip()
+    sections: list[tuple[str, str]] = []
+    for i, m in enumerate(matches):
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(body)
+        title = m.group(1).strip().title()
+        sections.append((title, body[m.end() : end].strip()))
+    return intro, sections
 
 
 class EntryListItem(ListItem):
@@ -131,6 +162,9 @@ class LoreApp(App):
     #entry-list EntryListItem Label { width: 1fr; height: 1; content-align: left middle; }
     #content-pane { width: 2fr; height: 100%; }
     #content-header { width: 1fr; height: 3; padding: 1 1; text-style: bold; display: none; }
+    #read-aloud { width: 1fr; height: auto; display: none; padding: 1 2 0 2; }
+    #callouts { width: 1fr; height: auto; display: none; padding: 1 2 1 2; }
+    #callouts Static { width: 1fr; height: auto; }
     #content { width: 1fr; height: 1fr; padding: 1 2; }
     """
 
@@ -262,11 +296,19 @@ class LoreApp(App):
                 yield ListView(id="entry-list")
             with Vertical(id="content-pane"):
                 yield Label("", id="content-header")
+                # Read-Aloud accent callout
+                yield Static("", id="read-aloud")
                 yield MarkdownViewer(
                     "",
                     show_table_of_contents=False,
                     id="content",
                 )
+                # DM-reference callout strip (D) — Atmosphere/Hazards/Hooks/Sounds
+                with Horizontal(id="callouts"):
+                    yield Static("", id="callout-atmosphere")
+                    yield Static("", id="callout-hazards")
+                    yield Static("", id="callout-hooks")
+                    yield Static("", id="callout-sounds")
         yield Footer()
 
     def _get_filtered_entries(self) -> list[LoreEntry]:
@@ -300,19 +342,52 @@ class LoreApp(App):
         self.selected_entry = entry
         header = self.query_one("#content-header", Label)
         viewer = self.query_one("#content", MarkdownViewer)
+        read_aloud = self.query_one("#read-aloud", Static)
         header.display = True
         header.styles.display = "block"
         icon = TYPE_ICONS.get(entry.type, "")
         header.update(f"  {icon}  {entry.name}")
         # MarkdownViewer: use document.update (Markdown widget inside viewer)
         body = entry.content.strip()
+        intro, sections = split_sections(body)
+        # Read-Aloud accent callout
+        ra = next(
+            (t for k, t in sections if k.lower().replace(" ", "-") == "read-aloud"),
+            None,
+        )
+        if ra:
+            read_aloud.display = True
+            read_aloud.update(
+                Panel(
+                    Text(ra, style="italic"),
+                    title="📖 Read-Aloud",
+                    border_style="gold1",
+                )
+            )
+        else:
+            read_aloud.display = False
+        # DM-reference callout strip
+        strip_has_content = False
+        for key in ("Atmosphere", "Hazards", "Hooks", "Sounds"):
+            w = self.query_one(f"#callout-{key.lower()}", Static)
+            text = next((t for k, t in sections if k.lower() == key.lower()), None)
+            if text:
+                strip_has_content = True
+                w.display = True
+                w.update(Panel(Text(text), title=key, border_style="dim"))
+            else:
+                w.display = False
+        callouts = self.query_one("#callouts", Horizontal)
+        callouts.display = strip_has_content
         parts: list[str] = []
         if entry.tags:
             # Textual defaults: inline code badges `#tag` (MarkdownViewer renders)
             tags = " ".join(f"`#{t}`" for t in entry.tags)
             parts.append(tags)
             parts.append("")
-        parts.append(body)
+        if intro:
+            parts.append(intro)
+            parts.append("")
         if entry.variants:
             parts.append("")
             parts.append("---")
