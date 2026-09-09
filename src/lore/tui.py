@@ -28,10 +28,10 @@ from lore.core.loader import load_all_entries
 from lore.core.config import get_theme, set_theme
 
 TYPE_ICONS = {
-    "area": "[*]",
-    "npc": "[@]",
-    "group": "[&]",
-    "object": "[#]",
+    "area": "⛰️",
+    "npc": "🧙",
+    "group": "⚔️",
+    "object": "🗡️",
 }
 
 
