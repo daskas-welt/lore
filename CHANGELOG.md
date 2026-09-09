@@ -5,6 +5,15 @@ All notable changes to Lore will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-09-09
+
+### Added
+- Emoji type icons in entry list and content header: ⛰️ area, 🧙 npc, ⚔️ group, 🗡️ object (src/lore/tui.py:30)
+- Polished typography for right pane: gold italic **📖 Read-Aloud** callout plus DM-reference strip (Atmosphere / Hazards / Hooks / Sounds) parsed from inline `Key:` sections in entry content (src/lore/tui.py:split_sections)
+
+### Fixed
+- Move `dependencies` out of `[project.urls]` in pyproject.toml — built wheels previously declared zero runtime dependencies so `pip install lore` succeeded without `textual`/`rich` etc. (pyproject.toml)
+
 ## [0.1.0] - 2026-08-27
 
 ### Added

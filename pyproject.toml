@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lore"
-version = "0.1.0"
+version = "0.2.0"
 description = "A read-aloud companion for Dungeon Masters — browse, search, and display ready-made descriptions at the table"
 requires-python = ">=3.10"
 classifiers = [
