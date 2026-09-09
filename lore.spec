@@ -1,28 +1,31 @@
 # -*- mode: python ; coding: utf-8 -*-
 """PyInstaller spec for Lore TUI."""
 
+from PyInstaller.utils.hooks import collect_all, collect_submodules
+
+textual_datas, textual_binaries, textual_hidden = collect_all("textual")
+rich_datas, rich_binaries, rich_hidden = collect_all("rich")
+
 a = Analysis(
     ['src/lore/tui.py'],
     pathex=['src'],
-    binaries=[],
-    datas=[],
-    hiddenimports=[
-        "textual",
-        "textual.app",
-        "textual.binding",
-        "textual.containers",
-        "textual.widgets",
+    binaries=textual_binaries + rich_binaries,
+    datas=textual_datas + rich_datas,
+    hiddenimports=textual_hidden
+    + rich_hidden
+    + collect_submodules("textual.widgets")
+    + [
         "textual.widgets._markdown",
-        "textual.reactive",
-        "textual.screen",
-        "textual.suggester",
-        "textual.events",
-        "textual.message",
-        "rich",
-        "rich.panel",
-        "rich.text",
-        "rich.console",
-        "rich.markup",
+        "textual.widgets._markdown_viewer",
+        "textual.widgets._tabs",
+        "textual.widgets._list_view",
+        "textual.widgets._list_item",
+        "textual.widgets._static",
+        "textual.widgets._label",
+        "textual.widgets._header",
+        "textual.widgets._footer",
+        "textual.widgets._input",
+        "textual.widgets._button",
         "frontmatter",
         "yaml",
         "markdown",
