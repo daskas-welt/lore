@@ -52,7 +52,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,  # TUI, no console window on Windows
+    console=True,  # TUI requires a console — windowed (False) leaves stdin=None and crashes win32 driver
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
