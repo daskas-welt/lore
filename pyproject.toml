@@ -14,11 +14,6 @@ classifiers = [
     "Topic :: Games/Entertainment :: Role-Playing",
     "Programming Language :: Python :: 3",
 ]
-
-[project.urls]
-Homepage = "https://github.com/daskas-welt/lore"
-Changelog = "https://github.com/daskas-welt/lore/blob/main/CHANGELOG.md"
-Issues = "https://github.com/daskas-welt/lore/issues"
 dependencies = [
     "textual>=0.40.0",
     "rich>=13.0",
@@ -26,6 +21,11 @@ dependencies = [
     "pyyaml>=6.0",
     "markdown>=3.5",
 ]
+
+[project.urls]
+Homepage = "https://github.com/daskas-welt/lore"
+Changelog = "https://github.com/daskas-welt/lore/blob/main/CHANGELOG.md"
+Issues = "https://github.com/daskas-welt/lore/issues"
 
 [project.optional-dependencies]
 dev = [
