@@ -3,7 +3,7 @@
 
 a = Analysis(
     ['src/lore/tui.py'],
-    pathex=[],
+    pathex=['src'],
     binaries=[],
     datas=[],
     hiddenimports=[
@@ -19,6 +19,10 @@ a = Analysis(
         "textual.events",
         "textual.message",
         "rich",
+        "rich.panel",
+        "rich.text",
+        "rich.console",
+        "rich.markup",
         "frontmatter",
         "yaml",
         "markdown",

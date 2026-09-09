@@ -26,7 +26,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install pyinstaller
+        run: |
+          pip install pyinstaller
+          pip install .
 
       - name: Build executable
         run: pyinstaller lore.spec
